@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import models.{Session, SessionDAO, User, UserDAO}
 
 import scala.concurrent.Future
+import scala.runtime.Nothing$
 
 class AuthService @Inject()(userDAO: UserDAO, sessionDAO: SessionDAO){
   def generateToken(username: String): Future[Option[Session]]= {
@@ -18,5 +19,8 @@ class AuthService @Inject()(userDAO: UserDAO, sessionDAO: SessionDAO){
     userDAO.getUser(username)
   }
 
-  def getSession(token: String): Future[Session] = sessionDAO.getSession(token)
+  def getSession(token: String): Future[Session] = {
+    sessionDAO.getSession(token)
+
+  }
 }
