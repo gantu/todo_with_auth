@@ -1,6 +1,7 @@
 package controllers
 
-import models.{User, Session}
+import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
+import models.{Session, User}
 
 import javax.inject._
 import play.api._
@@ -18,21 +19,25 @@ import scala.concurrent.Future
 class HomeController @Inject()(val controllerComponents: ControllerComponents, authService: AuthService) extends BaseController {
 
 
-  def index() = Action { implicit request: Request[AnyContent] =>
+  def index(): Action[AnyContent] = Action {
     Ok(views.html.index())
   }
 
-  def extractUser(request: RequestHeader): Future[Session] = {
+  def priv(): Action[AnyContent] = Action.async{ implicit request: Request[AnyContent] =>
     val sessionFromHeader = request.session.get("myToken")
+    sessionFromHeader match {
+      case None => Future {Unauthorized(views.html.defaultpages.unauthorized())}
+      case Some(token) => extractUser(token) map { user =>
+        Ok(views.html.priv(user))
+      }
+    }
+  }
 
-    val user: Future[Session] = for {
-      token <- sessionFromHeader
+  def extractUser(token: String): Future[User] = {
+    for {
       session <- authService.getSession(token)
       username = session.username
       user <- authService.getUserByUsername(username)
     } yield user
-    user
   }
-
-
 }

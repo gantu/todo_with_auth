@@ -9,7 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class User(username: String, password: String)
 
-class UserTableDef(tag: Tag) extends Table[User](tag, "user") {
+class UserTableDef(tag: Tag) extends Table[User](tag, "users") {
   def username = column[String]("username", O.PrimaryKey)
   def password = column[String]("password")
 

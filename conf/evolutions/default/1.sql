@@ -1,6 +1,6 @@
 -- !Ups
 
-create table user (
+create table users (
     username varchar(100) primary key,
     password varchar(255)
 )
