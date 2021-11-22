@@ -30,4 +30,15 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
     userReq.user.map(u => Ok(views.html.priv(u))).getOrElse(Ok(views.html.forbidden()))
   }
 
+  def login(username: String, pass: String) = Action.async { implicit request: Request[AnyContent] =>
+    val token = for {
+      user <- authService.getUserByUsernameAndPassword(username, pass)
+      optToken <- authService.generateToken(user.username)
+    } yield optToken
+
+    token.map { optionalT =>
+      optionalT.map(t => Redirect(routes.HomeController.index).withSession(request.session + ("myToken" -> t.token)))
+        .getOrElse(Unauthorized(views.html.defaultpages.unauthorized()).withNewSession)
+    }
+  }
 }

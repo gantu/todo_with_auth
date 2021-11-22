@@ -10,3 +10,4 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 GET     /         controllers.HomeController.index
 
 GET    /priv      controllers.HomeController.priv
+GET    /login    controllers.HomeController.login(username, password)
