@@ -11,11 +11,11 @@ class AuthService @Inject()(userDAO: UserDAO, sessionDAO: SessionDAO){
     sessionDAO.generateToken(username)
   }
 
-  def getUserByUsernameAndPassword(username: String, password: String): Future[User] = {
+  def getUserByUsernameAndPassword(username: String, password: String): Future[Option[User]] = {
     userDAO.getUser(username, password)
   }
 
-  def getUserByUsername(username: String): Future[User] = {
+  def getUserByUsername(username: String): Future[Option[User]] = {
     userDAO.getUser(username)
   }
 

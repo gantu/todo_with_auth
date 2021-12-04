@@ -21,7 +21,7 @@ class UserAction @Inject()(val parser: BodyParsers.Default, authService: AuthSer
       case Some(token) => for {
         sess <- authService.getSession(token)
         user <- authService.getUserByUsername(sess.username)
-      } yield new UserRequest(Some(user), request)
+      } yield new UserRequest(user, request)
     }
 
   }

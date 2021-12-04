@@ -33,7 +33,11 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
   def login(username: String, pass: String) = Action.async { implicit request: Request[AnyContent] =>
     val token = for {
       user <- authService.getUserByUsernameAndPassword(username, pass)
-      optToken <- authService.generateToken(user.username)
+      optToken <-
+        user match {
+          case None => Future.successful(None)
+          case Some(u) => authService.generateToken(u.username)
+        }
     } yield optToken
 
     token.map { optionalT =>

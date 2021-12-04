@@ -5,6 +5,7 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.jdbc.PostgresProfile.api._
 
+import java.util.NoSuchElementException
 import scala.concurrent.{ExecutionContext, Future}
 
 case class User(username: String, password: String)
@@ -21,13 +22,13 @@ class UserDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
 
   val users = TableQuery[UserTableDef]
 
-  def getUser(username: String): Future[User] ={
-    val query = users.filter(_.username === username).result.head
+  def getUser(username: String): Future[Option[User]] ={
+    val query = users.filter(_.username === username).result.headOption
     dbConfig.db.run(query)
   }
 
-  def getUser(username: String, password: String): Future[User] = {
-    val query = users.filter(_.username === username).filter(_.password === password).result.head
+  def getUser(username: String, password: String): Future[Option[User]] = {
+    val query = users.filter(_.username === username).filter(_.password === password).result.headOption
     dbConfig.db.run(query)
   }
 
